@@ -4,7 +4,7 @@
   "description": "This is api project",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.ts"
   },
   "author": "Vivek",
   "license": "ISC",
