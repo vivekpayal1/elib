@@ -1,1 +1,3 @@
-console.log("Welcome to Ebook");
+function test() {
+  console.log("Hello");
+}
