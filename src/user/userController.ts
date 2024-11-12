@@ -40,9 +40,10 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const token = sign({ sub: newUser._id }, config.jwtSecret as string, {
       expiresIn: "7d",
     });
-    res.json({ accessToken: token });
+    res.status(201).json({ accessToken: token });
   } catch (error) {
     next(createHttpError(500, "Error While Sign In"));
   }
 };
-export { createUser };
+
+export { createUser, loginUser };
