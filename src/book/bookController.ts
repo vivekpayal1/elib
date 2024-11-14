@@ -1,5 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-const createBook = (req: Request, res: Response, next: NextFunction) => {
-  res.json({ message: "book create successfully" });
+import { Request, Response } from "express";
+const createBook = (req: Request, res: Response) => {
+  console.log(req.file);
+  console.log("files", req.files);
+  res.json({});
 };
 export { createBook };
