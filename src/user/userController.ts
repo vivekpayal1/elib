@@ -47,7 +47,6 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
-
   if (!email || !password) {
     return next(createHttpError(400, "All Field Required"));
   }
