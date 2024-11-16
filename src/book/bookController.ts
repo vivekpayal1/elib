@@ -67,8 +67,6 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
 // Upadate Single BOkk
 const updateBook = async (req: Request, res: Response, next: NextFunction) => {
   const { title, genre } = req.body;
-  console.log("🚀 ~ updateBook ~ title:", title)
-  console.log("🚀 ~ updateBook ~ genre:", genre)
   const bookId = req.params.bookId;
 
   try {
