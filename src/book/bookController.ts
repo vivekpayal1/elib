@@ -6,6 +6,7 @@ import createHttpError from "http-errors";
 import bookModel from "./bookModel";
 import { AuthRequest } from "../middlewares/authenticate";
 
+// Create Book
 const createBook = async (req: Request, res: Response, next: NextFunction) => {
   const { title, genre } = req.body;
   const files = req.files as { [fileName: string]: Express.Multer.File[] };
@@ -63,7 +64,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     next(createHttpError(500, "Error while uploading files!"));
   }
 };
-
+// Upadate Single BOkk
 const updateBook = async (req: Request, res: Response, next: NextFunction) => {
   const { title, genre } = req.body;
   const bookId = req.params.bookId;
@@ -138,7 +139,7 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
     next(createHttpError(500, "Error while updating book!"));
   }
 };
-
+// Get All Book List
 const bookList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const books = await bookModel.find();
@@ -151,5 +152,24 @@ const bookList = async (req: Request, res: Response, next: NextFunction) => {
     next(createHttpError(500, "Error While Getting book List"));
   }
 };
-
-export { createBook, updateBook, bookList };
+// Get Single Book
+const getSingleBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { bookId } = req.params;
+    console.log("🚀 ~ bookId:", bookId);
+    const book = await bookModel.findOne({ _id: bookId });
+    console.log("🚀 ~ book:", book);
+    if (!book) {
+      return next(createHttpError(400, "Book not found"));
+    }
+    res.status(200).json(book);
+  } catch (error) {
+    console.log(error);
+    return next(createHttpError(400, "Error Getting Book"));
+  }
+};
+export { createBook, updateBook, bookList, getSingleBook };
