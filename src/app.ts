@@ -12,15 +12,15 @@ app.use(
     origin: config.frontendDomain,
   })
 );
-// For Parse Incoming Req 
+// For Parse Incoming Req
 app.use(express.json());
 
-// Home Route 
+// Home Route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome To Elib Apis" });
 });
 
-// User Route 
+// User Route
 app.use("/api/users", userRouter);
 
 // Book Routes

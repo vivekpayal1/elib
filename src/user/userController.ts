@@ -6,6 +6,7 @@ import { sign } from "jsonwebtoken";
 import { config } from "../config/config";
 import { User } from "./userTypes";
 
+// Register
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -20,6 +21,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       return next(error);
     }
   } catch (error) {
+    console.log(error);
     return next(createHttpError(400, "Error while getting Error"));
   }
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -32,6 +34,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       password: hashedPassword,
     });
   } catch (error) {
+    console.log(error);
     return next(createHttpError(500, "Error while creating User"));
   }
 
@@ -39,12 +42,15 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = sign({ sub: newUser._id }, config.jwtSecret as string, {
       expiresIn: "7d",
+      algorithm: "HS256",
     });
     res.status(201).json({ accessToken: token });
   } catch (error) {
+    console.log(error);
     next(createHttpError(500, "Error While Sign In"));
   }
 };
+// Login User
 const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
   if (!email || !password) {

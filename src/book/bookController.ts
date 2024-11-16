@@ -67,6 +67,8 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
 // Upadate Single BOkk
 const updateBook = async (req: Request, res: Response, next: NextFunction) => {
   const { title, genre } = req.body;
+  console.log("🚀 ~ updateBook ~ title:", title)
+  console.log("🚀 ~ updateBook ~ genre:", genre)
   const bookId = req.params.bookId;
 
   try {
@@ -143,7 +145,7 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
 const bookList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const books = await bookModel.find();
-    if (!books) {
+    if (books.length === 0) {
       next(createHttpError(400, "No Books Found"));
     }
     res.status(200).json(books);
@@ -159,10 +161,8 @@ const getSingleBook = async (
   next: NextFunction
 ) => {
   try {
-    const { bookId } = req.params;
-    console.log("🚀 ~ bookId:", bookId);
+    const bookId = req.params.bookId;
     const book = await bookModel.findOne({ _id: bookId });
-    console.log("🚀 ~ book:", book);
     if (!book) {
       return next(createHttpError(400, "Book not found"));
     }
@@ -172,4 +172,32 @@ const getSingleBook = async (
     return next(createHttpError(400, "Error Getting Book"));
   }
 };
-export { createBook, updateBook, bookList, getSingleBook };
+
+// Delete Book
+const deleteBook = async (req: Request, res: Response, next: NextFunction) => {
+  const bookId = req.params.bookId;
+  try {
+    const book = await bookModel.findOne({ _id: bookId });
+    if (!book) {
+      return next(createHttpError(400, "Book not found"));
+    }
+    const _req = req as AuthRequest;
+    if (book.author.toString() !== _req.userId) {
+      return next(createHttpError(403, "Unauthorized"));
+    }
+    const coverFileSplit = book.coverImage.split("/");
+    const coverImagePublicId =
+      coverFileSplit.at(-2) + "/" + coverFileSplit.at(-1)?.split(".");
+    const bookFileSplit = book.file.split("/");
+    const bookFilePublicId = bookFileSplit.at(-2) + "/" + bookFileSplit.at(-1);
+    await cloudinary.uploader.destroy(coverImagePublicId);
+    await cloudinary.uploader.destroy(bookFilePublicId, {
+      resource_type: "raw",
+    });
+    await bookModel.deleteOne({ _id: bookId });
+    return res.sendStatus(204);
+  } catch (error) {
+    console.log(error);
+  }
+};
+export { createBook, updateBook, bookList, getSingleBook, deleteBook };
